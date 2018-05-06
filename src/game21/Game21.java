@@ -122,6 +122,7 @@ public class Game21 {
      * Print final scores at the end of a game.
      */
     private static void printScores() {
+        System.out.println("\r\n************************************************\r\nEnd of this game.");
         System.out.println("Your score:"+scores[userIndex]);
         System.out.println("Computer score:"+scores[computerIndex]);
         if (scores[userIndex]>scores[computerIndex])
@@ -130,5 +131,6 @@ public class Game21 {
             System.out.println("You loose.");
         else
             System.out.println("It's incredible! You have got same score with computer.");
+        System.out.println("************************************************");
     }
 }
