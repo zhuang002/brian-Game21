@@ -18,6 +18,14 @@ public class Game21 {
     private static int[] scores = new int[2]; // scores for 2 players
     private static int userIndex, computerIndex; // the index of score array for user and computer. 
     private static String userThrowHint="Please hit return key to throw."; // the static message to use.
+    private static double[][] levels={
+        {1.0/11.0, 1.0/11.0, 1.0/11.0, 1.0/11.0, 1.0/11.0, 1.0/11.0, 1.0/11.0, 1.0/11.0, 1.0/11.0, 1.0/11.0},
+        {0.01, 0.04, 0.05, 0.05, 0.05, 0.1, 0.2, 0.2, 0.1, 0.1, 0.05},
+        {0.0,  0.01, 0.02, 0.03, 0.04, 0.1, 0.2, 0.2, 0.2, 0.1, 0.1},
+        {0.0,  0.01, 0.01, 0.02, 0.03, 0.04,0.09,0.2, 0.2, 0.3, 0.1},
+        {0.0,  0.0,  0.01, 0.01, 0.02, 0.02,0.02,0.1, 0.2, 0.3, 0.3}
+    }; // the possiblities of knock bins for different levels.
+    private static double[] selectedLevel;
     /**
      * @param args the command line arguments
      */
@@ -30,6 +38,9 @@ public class Game21 {
      * the main method to start the game.
      */
     private static void startBowling() {
+        System.out.print("Please select game level (1~5):");
+        int level=getValidInteger(1,5)-1;
+        selectedLevel=levels[level];
         do {
             startOneGame();
         } while (confirmContinue());
@@ -97,7 +108,7 @@ public class Game21 {
             System.out.print(hint);
             sc.nextLine();
         }
-        int bins1=rand.nextInt(10)+1;
+        int bins1=oneThrow(10);
         System.out.printf("First throw: %d bins.\r\n",bins1);
         if (bins1==10) { // hit 10 bins at first throw
             scores[index]+=20;
@@ -108,7 +119,7 @@ public class Game21 {
                 System.out.print(hint);
                 sc.nextLine();
             }
-            int bins2=rand.nextInt(10-bins1)+1;
+            int bins2=oneThrow(10-bins1);
             System.out.printf("Second throw: %d bins.\r\n",bins2);
             if (bins1+bins2==10) // hit 10 bins with 2 throws
                 scores[index]+=15;
@@ -133,4 +144,83 @@ public class Game21 {
             System.out.println("It's incredible! You have got same score with computer.");
         System.out.println("************************************************");
     }
+
+    /**
+     * Simulate one throw
+     * @param bins the bins left before throw.
+     * @return the bins left after throw.
+     */
+    private static int oneThrow(int bins) {
+        double r=rand.nextDouble();
+        double possibility=0;
+        double[] convertedLevel=getConvertedLevel(bins);
+        for (int i=0; i<convertedLevel.length;i++) {
+            possibility+=convertedLevel[i];
+            if (r<=possibility) 
+                return i;
+        }
+        return bins;
+    }
+
+    /**
+     * Calculate the level possibilities from 11 bins to left n bins.
+     * @param bins the bins left.
+     * @return the converted possibility array for the left bins.
+     */
+    private static double[] getConvertedLevel(int bins) {
+        if (bins==10) // if there are 10 bins, do not need to convert possibilities.
+            return selectedLevel;
+        double[] convertedLevel=new double[bins+1]; // create the new possibility array
+        for (int i=0;i<convertedLevel.length;i++) // initialize the array
+            convertedLevel[i]=0;
+        int count=0;
+        double possibilitySum=0; // accumulate the used possibilities.
+        double sectorLength=11.0/(bins+1); //get the span length for the possibility.
+        double growLength=sectorLength; // a running length to keep the position of increased length.
+        for (int i=0;i<selectedLevel.length;i++) {
+            if (i<growLength-1) { // the old possibility should be added to the new possibility.
+                convertedLevel[count]+=selectedLevel[i];
+                possibilitySum+=selectedLevel[i];
+            }
+            else { // the current old possibility should be split to 2 new possibilities.
+                convertedLevel[count]+=selectedLevel[i]*(growLength-i); // added to previous possibility.
+                count++; // increase the counter for the new possibilities.
+                convertedLevel[count]+=selectedLevel[i]*((double)i-growLength+1); // add to the later possibility.
+                growLength+=sectorLength; // increase the step.
+                possibilitySum+=selectedLevel[i]; // sum up used possibilities
+                if (count==convertedLevel.length-1) { // for the last new possibility we use all the left possibilites.
+                    convertedLevel[count]+=1.0-possibilitySum;
+                    break;
+                }
+            }
+        }
+        return convertedLevel;
+    }
+    
+    /**
+     * Get a valid integer input between min and max
+     * @param min the lowest value of the valid input.
+     * @param max the highest value of the valid input.
+     * @return the valid input.
+     */
+    private static int getValidInteger(int min, int max) {
+        boolean valid=false;
+        int a=-1;
+        while (!valid) {
+            try {
+                a=sc.nextInt();
+                valid = (a>=min && a<=max);
+            }
+            catch (Exception e) {
+                // capture error if the user input is not an integer.
+                sc.next();
+                valid=false;
+            }
+            if (!valid) {
+                System.out.printf("Wrong input. You must input integer between %d and %d\r\n",min,max);
+            }
+        }
+        return a;
+    }
+
 }
