@@ -97,7 +97,7 @@ public class Game21 {
             System.out.print(hint);
             sc.nextLine();
         }
-        int bins1=rand.nextInt(10)+1;
+        int bins1=rand.nextInt(11);
         System.out.printf("First throw: %d bins.\r\n",bins1);
         if (bins1==10) { // hit 10 bins at first throw
             scores[index]+=20;
@@ -108,7 +108,7 @@ public class Game21 {
                 System.out.print(hint);
                 sc.nextLine();
             }
-            int bins2=rand.nextInt(10-bins1)+1;
+            int bins2=rand.nextInt(11-bins1);
             System.out.printf("Second throw: %d bins.\r\n",bins2);
             if (bins1+bins2==10) // hit 10 bins with 2 throws
                 scores[index]+=15;
@@ -130,7 +130,7 @@ public class Game21 {
         else if (scores[userIndex]<scores[computerIndex])
             System.out.println("You loose.");
         else
-            System.out.println("It's incredible! You have got same score with computer.");
+            System.out.println("It's incredible! You have got same score as computer.");
         System.out.println("************************************************");
     }
 }
