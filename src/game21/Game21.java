@@ -141,7 +141,7 @@ public class Game21 {
         else if (scores[userIndex]<scores[computerIndex])
             System.out.println("You loose.");
         else
-            System.out.println("It's incredible! You have got same score with computer.");
+            System.out.println("It's incredible! You have got same score as computer.");
         System.out.println("************************************************");
     }
 
