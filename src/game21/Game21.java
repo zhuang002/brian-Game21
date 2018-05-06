@@ -13,11 +13,11 @@ import java.util.Scanner;
  * @author zhuan
  */
 public class Game21 {
-    private static Scanner sc = new Scanner(System.in);
-    private static Random rand = new Random();
-    private static int[] scores = new int[2];
-    private static int userIndex, computerIndex;
-    private static String userThrowHint="Please hit return key to throw.";
+    private static Scanner sc = new Scanner(System.in); // scanner to be shared by all methods.
+    private static Random rand = new Random(); // random object to be shared by all methods.
+    private static int[] scores = new int[2]; // scores for 2 players
+    private static int userIndex, computerIndex; // the index of score array for user and computer. 
+    private static String userThrowHint="Please hit return key to throw."; // the static message to use.
     /**
      * @param args the command line arguments
      */
@@ -26,18 +26,28 @@ public class Game21 {
         startBowling();
     }
 
+    /**
+     * the main method to start the game.
+     */
     private static void startBowling() {
         do {
             startOneGame();
         } while (confirmContinue());
     }
 
+    /**
+     * Ask user to continue a new game.
+     * @return true for continue. false for ending program.
+     */
     private static boolean confirmContinue() {
         System.out.print("Do you want to continue a new game(Y/N)?");
         String s = sc.next();
         return s.equalsIgnoreCase("y") || s.equalsIgnoreCase("yes");
     }
 
+    /**
+     * Play one game.
+     */
     private static void startOneGame() {
         System.out.println("New game start.");
         scores[0]=0; // clear scores
@@ -49,6 +59,10 @@ public class Game21 {
         printScores();
     }
 
+    /**
+     * determine whether the user throws first or computer throws first. 
+     * When user first, the userIndex should be 0. Otherwise the computerIndex should be 0.
+     */
     private static void determineWhoThrowFirst() {
         System.out.println("Press return key to determine who throws first:");
         sc.nextLine();
@@ -57,6 +71,9 @@ public class Game21 {
         System.out.printf("%s throws first.\r\n", userIndex == 0 ? "User" : "Computer");
     }
 
+    /**
+     * The program to simulate one round for both players.
+     */
     private static void playOneRound() {
         if (userIndex==0) {
             playOneFrame(0,"Your",userThrowHint);
@@ -68,6 +85,12 @@ public class Game21 {
         }
     }
 
+    /**
+     * Simulate one player plays one frame.
+     * @param index The index of the player. should be 0 or 1.
+     * @param player The title of the player used in hint messages.
+     * @param hint The hint message for the user player. When null, the hint is not printed and should not wait for user input.
+     */
     private static void playOneFrame(int index, String player, String hint) {
         System.out.println("\r\n"+player+" turn:");
         if (hint!=null) { // should interact with user
@@ -95,6 +118,9 @@ public class Game21 {
         System.out.printf("%s current score is : %d. \r\n",player,scores[index]);
     }
 
+    /**
+     * Print final scores at the end of a game.
+     */
     private static void printScores() {
         System.out.println("Your score:"+scores[userIndex]);
         System.out.println("Computer score:"+scores[computerIndex]);
